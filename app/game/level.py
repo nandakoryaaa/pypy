@@ -12,7 +12,6 @@ class Level:
     self.height = 0
     self.data = None
     self.free_cells = 0
-    self.width = 0
     self.build(lines)
 
   def build(self, lines):

@@ -20,6 +20,7 @@ class Game:
 		self.mode = self.MODE_QUIT
 		self.controller = None
 		self.graphics = graphics
+		self.score = 0
 
 	def init_mode(self, mode):
 		if mode == self.MODE_MAIN_MENU:

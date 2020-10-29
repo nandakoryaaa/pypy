@@ -8,19 +8,23 @@ class Level:
 
   def __init__(self, lines):
     self.start_addr = 0
-    self.line_length = 0
+    self.width = 0
+    self.height = 0
     self.data = None
     self.free_cells = 0
+    self.width = 0
     self.build(lines)
 
   def build(self, lines):
-    self.line_length = 0
+    self.width = 0
+    self.height = len(lines)
     for line in lines:
+      line = line.rstrip()
       l = len(line)
-      if l > self.line_length:
-        self.line_length = l
+      if l > self.width:
+        self.width = l
 
-    level = bytearray(len(lines) * self.line_length)
+    level = bytearray(len(lines) * self.width)
 
     line_addr = 0
     for line in lines:
@@ -35,6 +39,6 @@ class Level:
           level[offset] = 1
           self.start_addr = offset
         offset += 1
-      line_addr += self.line_length
+      line_addr += self.width
 
     self.data = level

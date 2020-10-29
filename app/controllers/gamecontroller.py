@@ -23,6 +23,7 @@ class GameController(Controller):
   def update(self, events, game):
     python = self.python
     if python.mode == Python.DEAD:
+      game.score = 0
       self.reset_python()
       return False
 
@@ -39,7 +40,6 @@ class GameController(Controller):
       elif key == pygame.K_DOWN and dir != self.DIR_UP:
         python.set_dir(self.DIR_DOWN)
 
-
     if self.delay > 0:
       self.delay -= 1
       return True
@@ -55,12 +55,14 @@ class GameController(Controller):
     level.data[new_tail_addr] = Level.TAIL
 
     if python.mode == Python.MOVE or python.mode == Python.GROW:
+      game.score += 1
       head_addr = python.get_head_addr()
       (dx, dy) = self.dirs[python.dir]
-      new_head_addr = head_addr + dy * level.line_length + dx
+      new_head_addr = head_addr + dy * level.width + dx
       if level.data[new_head_addr] == Level.APPLE:
         python.set_mode(Python.GROW, 5)
         self.create_apple()
+        game.score += 5
       elif level.data[new_head_addr] != Level.FIELD:
         python.set_mode(Python.SHRINK, python.length)
         new_head_addr = head_addr
@@ -70,6 +72,8 @@ class GameController(Controller):
       level.data[head_addr] = Level.TAIL
       level.data[new_head_addr] = Level.HEAD
 
+    self.view.score = game.score
+    self.view.length = python.length
     self.view.render()
     python.update()
 
@@ -79,7 +83,7 @@ class GameController(Controller):
     level = self.model
     apple_addr = None
     while(True):
-      apple_addr = randint(level.line_length + 1, len(level.data) - level.line_length - 1)
+      apple_addr = randint(level.width + 2, len(level.data) - level.width - 2)
       if level.data[apple_addr] == Level.FIELD:
         break
 

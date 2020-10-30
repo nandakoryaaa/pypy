@@ -23,8 +23,11 @@ class GameController(Controller):
   def update(self, events, game):
     python = self.python
     if python.mode == Python.DEAD:
-      game.score = 0
-      self.reset_python()
+      if game.lives == 0:
+        game.score = 0
+        game.push_mode(game.MODE_GAME_OVER)
+      else:
+        self.reset_python()
       return False
 
     dir = python.dir
@@ -39,6 +42,9 @@ class GameController(Controller):
         python.set_dir(self.DIR_UP)
       elif key == pygame.K_DOWN and dir != self.DIR_UP:
         python.set_dir(self.DIR_DOWN)
+      elif key == pygame.K_ESCAPE:
+        game.push_mode(game.MODE_PAUSE)
+        return False
 
     if self.delay > 0:
       self.delay -= 1
@@ -65,6 +71,7 @@ class GameController(Controller):
         game.score += 5
       elif level.data[new_head_addr] != Level.FIELD:
         python.set_mode(Python.SHRINK, python.length)
+        game.lives -= 1
         new_head_addr = head_addr
         level.data[self.apple_addr] = Level.FIELD
 
@@ -74,6 +81,7 @@ class GameController(Controller):
 
     self.view.score = game.score
     self.view.length = python.length
+    self.view.lives = game.lives
     self.view.render()
     python.update()
 

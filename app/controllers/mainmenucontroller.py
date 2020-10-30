@@ -19,8 +19,14 @@ class MainMenuController(Controller):
         self.model.next_item()
       elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         if self.model.selected_item == self.MENU_PLAY:
+          game.score = 0
+          game.lives = 3
           game.init_mode(game.MODE_PLAY)
+          return False
         elif self.model.selected_item == self.MENU_QUIT:
           game.init_mode(game.MODE_QUIT)
+          return False
+
     self.view.render()
+    return True
 

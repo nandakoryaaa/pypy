@@ -21,7 +21,7 @@ class Graphics:
 		self.screen_height = h
 		self.context = pygame.display.set_mode((w, h)) #, pygame.FULLSCREEN)
 		self.rect = pygame.Rect(0, 0, 0, 0)
-		self.img_font = self.load_image('data/graphics/font.png')
+		self.img_font = self.load_image('data/fonts/font.png')
 		self.font_height = self.img_font.get_height()
 
 	def draw_rect(self, x, y, w, h, color):

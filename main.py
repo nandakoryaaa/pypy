@@ -7,16 +7,12 @@ from app.views.gameview import GameView
 from app.views.mainmenuview import MainMenuView
 from app.controllers.gamecontroller import GameController
 from app.controllers.mainmenucontroller import MainMenuController
-from app.models.mainmenumodel import MainMenuModel
+from app.models.menumodel import MenuModel
 
 config = Config('game.ini')
 w = int(config.window.width)
 h = int(config.window.height)
 graphics = Graphics(w, h)
-
-model = MainMenuModel(graphics, ('play', 'options', 'hall_of_fame', 'quit'))
-view = MainMenuView(graphics, model)
-controller = MainMenuController(view, model)
 
 game = Game(graphics)
 game.init_mode(Game.MODE_MAIN_MENU)
@@ -30,9 +26,6 @@ while game.mode != Game.MODE_QUIT:
       game.init_mode(Game.MODE_QUIT)
       break
     if event.type == pygame.KEYDOWN:
-      if event.key == pygame.K_ESCAPE:
-        game.init_mode(Game.MODE_QUIT)
-        break
       controller_events.append(event)
 
   game.controller.update(controller_events, game)

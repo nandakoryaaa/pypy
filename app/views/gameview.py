@@ -3,7 +3,9 @@ from app.views.view import View
 class GameView(View):
   def __init__(self, graphics, model):
     super().__init__(graphics, model)
-    self.img_stats = graphics.load_image('data/graphics/stats.png')
+    self.img_stats = graphics.load_image('data/img/stats.png')
+    self.img_life = graphics.load_image('data/img/life.png')
+    self.img_life_lost = graphics.load_image('data/img/life_lost.png')
 
     screen_w = self.graphics.screen_width
     screen_h = self.graphics.screen_height - self.img_stats.get_height()
@@ -21,12 +23,21 @@ class GameView(View):
     self.cell_size = cell_size
     self.score = 0
     self.length = 0
+    self.lives = 0
 
   def render(self):
     self.graphics.fill((0,0,0))
     self.graphics.draw_image(self.img_stats, 0, 0)
     self.graphics.draw_text(str(self.score), 145, 5)
     self.graphics.draw_text(str(self.length), 565, 5)
+
+    x = 852
+    for i in range (3 - self.lives):
+      self.graphics.draw_image(self.img_life_lost, x, 6)
+      x += 46
+    for i in range (self.lives):
+      self.graphics.draw_image(self.img_life, x, 6)
+      x += 46
 
     x = self.level_x
     y = self.level_y

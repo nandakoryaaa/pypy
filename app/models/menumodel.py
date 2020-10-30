@@ -1,7 +1,7 @@
-class MainMenuModel:
+class MenuModel:
   def __init__(self, loader, item_list):
     self.loader = loader
-    self.img_selector = loader.load_image('data/graphics/menu_select.png')
+    self.img_selector = loader.load_image('data/img/menu_select.png')
     self.selected_item = 0
     self.load(item_list)
 
@@ -10,8 +10,8 @@ class MainMenuModel:
     self.menu = []
     self.width = 0
     for img_name in item_list:
-      img = self.loader.load_image('data/graphics/menu_' + img_name + '.png')
-      img_hi = self.loader.load_image('data/graphics/menu_' + img_name + '_hi.png')
+      img = self.loader.load_image('data/img/' + img_name + '.png')
+      img_hi = self.loader.load_image('data/img/' + img_name + '_hi.png')
       self.menu.append((img, img_hi))
       w = img.get_width()
       if (w > self.width):

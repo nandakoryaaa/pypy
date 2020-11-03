@@ -21,10 +21,11 @@ class Game:
 	MODE_HALL_OF_FAME = 7
 	MODE_PAUSE = 8
 
-	def __init__(self, graphics):
+	def __init__(self, graphics, audio):
+		self.graphics = graphics
+		self.audio = audio
 		self.mode = self.MODE_QUIT
 		self.controller = None
-		self.graphics = graphics
 		self.score = 0
 		self.lives = 0
 		self.controller_stack = []

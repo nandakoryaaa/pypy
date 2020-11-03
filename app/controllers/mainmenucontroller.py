@@ -15,8 +15,10 @@ class MainMenuController(Controller):
       key = event.key
       if key == pygame.K_UP:
         self.model.prev_item()
+        game.audio.play_sfx('apple')
       elif key == pygame.K_DOWN:
         self.model.next_item()
+        game.audio.play_sfx('apple')
       elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         if self.model.selected_item == self.MENU_PLAY:
           game.score = 0

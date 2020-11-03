@@ -69,11 +69,13 @@ class GameController(Controller):
         python.set_mode(Python.GROW, 5)
         self.create_apple()
         game.score += 5
+        game.audio.play_sfx('apple')
       elif level.data[new_head_addr] != Level.FIELD:
         python.set_mode(Python.SHRINK, python.length)
         game.lives -= 1
         new_head_addr = head_addr
         level.data[self.apple_addr] = Level.FIELD
+        game.audio.play_sfx('death')
 
       python.move_head(new_head_addr)
       level.data[head_addr] = Level.TAIL

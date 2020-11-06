@@ -37,7 +37,7 @@ while game.mode != Game.MODE_QUIT:
     if event.type == pygame.KEYDOWN:
       controller_events.append(event)
 
-  game.controller.update(controller_events, game)
+  game.controller.update(game, controller_events)
   graphics.update()
   clock.tick(30)
 

@@ -1,28 +1,44 @@
 import pygame
-from app.controllers.controller import Controller
+from app.controllers.menucontroller import MenuController
+from app.models.menuitem import MenuItem
 
-class PauseController(Controller):
-  MENU_SOUND = 0
-  MENU_MAIN_MENU = 1
-  MENU_CONTINUE = 2
+class PauseController(MenuController):
 
-  def update(self, events, game):
-    for event in events:
-      key = event.key
-      if key == pygame.K_UP:
-        self.model.prev_item()
-      elif key == pygame.K_DOWN:
-        self.model.next_item()
-      elif key == pygame.K_ESCAPE:
-        game.pop_mode()
-        return False
-      elif key == pygame.K_RETURN or key == pygame.K_SPACE:
-        if self.model.selected_item == self.MENU_MAIN_MENU:
-          game.reset_mode(game.MODE_MAIN_MENU)
-          return False
-        elif self.model.selected_item == self.MENU_CONTINUE:
-          game.pop_mode()
-          return False
+  def process_key(self, game, key):
+    if key == pygame.K_ESCAPE:
+      game.pop_mode()
+      return True
 
-    self.view.render()
-    return True
+    return False
+
+  def process_item(self, game, item):
+    if item.id == MenuItem.MAIN_MENU:
+      game.reset_mode(game.MODE_MAIN_MENU)
+      return True
+    elif item.id == MenuItem.CONTINUE:
+      game.pop_mode()
+      return True
+
+    return False
+
+  def process_control(self, game, item, step):
+    if (item.id == MenuItem.SOUND):
+      volume = self.calc(game.audio.sfx_volume, 0.1 * step)
+      game.audio.set_sfx_volume(volume)
+      item.value = volume
+      game.audio.play_sfx('apple')
+    elif (item.id == MenuItem.MUSIC):
+      volume = self.calc(game.audio.music_volume, 0.1 * step)
+      game.audio.set_music_volume(volume)
+      item.value = volume
+
+    return False
+
+  def calc(self, value, step):
+    value += step
+    if value < 0:
+      value = 0
+    elif value > 1:
+      value = 1
+
+    return value

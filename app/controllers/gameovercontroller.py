@@ -1,14 +1,15 @@
 import pygame
-from app.controllers.controller import Controller
+from app.controllers.menucontroller import MenuController
 
-class GameOverController(Controller):
+class GameOverController(MenuController):
 
-  def update(self, events, game):
-    for event in events:
-      key = event.key
-      if key == pygame.K_ESCAPE or key == pygame.K_RETURN or key == pygame.K_SPACE:
-        game.reset_mode(game.MODE_MAIN_MENU)
-        return False
+  def process_key(self, game, key):
+    if key == pygame.K_ESCAPE:
+      game.reset_mode(game.MODE_MAIN_MENU)
+      return True
 
-    self.view.render()
-    return True
+    return False
+
+  def process_item(self, game, item):
+      game.reset_mode(game.MODE_MAIN_MENU)
+      return True

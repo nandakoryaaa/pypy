@@ -1,22 +1,21 @@
+from app.models.menuitem import MenuItem
+
 class MenuModel:
   def __init__(self, loader, item_list):
     self.loader = loader
-    self.img_selector = loader.load_image('data/img/menu_select.png')
-    self.selected_item = 0
-    self.load(item_list)
-
-  def load(self, item_list):
+    self.item_list = item_list
     self.item_count = len(item_list)
-    self.menu = []
+    self.selected_item = 0
     self.width = 0
-    for img_name in item_list:
-      img = self.loader.load_image('data/img/' + img_name + '.png')
-      img_hi = self.loader.load_image('data/img/' + img_name + '_hi.png')
-      self.menu.append((img, img_hi))
-      w = img.get_width()
-      if (w > self.width):
+    self.height = 0
+    for item in item_list:
+      item.img = self.loader.load_image('data/img/' + item.file + '.png')
+      item.img_hi = self.loader.load_image('data/img/' + item.file + '_hi.png')
+      w = item.img.get_width()
+      if w > self.width:
         self.width = w
-    self.item_height = self.menu[0][0].get_height() + 10
+      self.height += item.img.get_height()
+    self.img_selector = loader.load_image('data/img/menu_select.png')
 
   def next_item(self):
     self.selected_item += 1
@@ -29,9 +28,10 @@ class MenuModel:
       self.selected_item = self.item_count - 1
 
   def get_item(self, num):
-    if (num == self.selected_item):
-      return self.menu[num][1]
-    return self.menu[num][0]
+    return self.item_list[num]
+
+  def get_selected_item(self):
+    return self.item_list[self.selected_item]
 
   def get_selector(self):
     return self.img_selector

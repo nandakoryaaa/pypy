@@ -7,14 +7,9 @@ class View:
     self.graphics = graphics
     self.model = model
 
-  def set_pos(self, x, y, w, h):
+  def set_pos(self, x, y):
     self.x = x
     self.y = y
-    self.width = w
-    self.height = h
 
   def render(self):
-    pass
-
-  def update(self):
     pass

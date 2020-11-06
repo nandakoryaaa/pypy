@@ -5,6 +5,7 @@ from app.game.level import Level
 from app.game.python import Python
 
 class GameController(Controller):
+
   DIR_LEFT = 0
   DIR_UP = 1
   DIR_RIGHT = 2
@@ -20,7 +21,7 @@ class GameController(Controller):
     self.apple_addr = None
     self.create_apple()
 
-  def update(self, events, game):
+  def update(self, game, events):
     python = self.python
     if python.mode == Python.DEAD:
       if game.lives == 0:
@@ -28,7 +29,7 @@ class GameController(Controller):
         game.push_mode(game.MODE_GAME_OVER)
       else:
         self.reset_python()
-      return False
+      return
 
     dir = python.dir
 
@@ -44,11 +45,11 @@ class GameController(Controller):
         python.set_dir(self.DIR_DOWN)
       elif key == pygame.K_ESCAPE:
         game.push_mode(game.MODE_PAUSE)
-        return False
+        return
 
     if self.delay > 0:
       self.delay -= 1
-      return True
+      return
 
     self.delay = self.speed
     level = self.model
@@ -86,8 +87,6 @@ class GameController(Controller):
     self.view.lives = game.lives
     self.view.render()
     python.update()
-
-    return True
 
   def create_apple(self):
     level = self.model

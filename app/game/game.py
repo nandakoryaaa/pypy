@@ -34,10 +34,10 @@ class Game:
   def init_mode(self, mode):
     if mode == self.MODE_MAIN_MENU:
       model = MenuModel(self.graphics, (
-        MenuItem(MenuItem.PLAY, 'menu_play'),
-        MenuItem(MenuItem.OPTIONS, 'menu_options'),
-        MenuItem(MenuItem.HALL_OF_FAME, 'menu_hall_of_fame'),
-        MenuItem(MenuItem.QUIT, 'menu_quit')
+        MenuItem(MenuItem.PLAY, 'PLAY'),
+        MenuItem(MenuItem.OPTIONS, 'OPTIONS'),
+        MenuItem(MenuItem.HALL_OF_FAME, 'HALL OF FAME'),
+        MenuItem(MenuItem.QUIT, 'QUIT')
       ))
       view = MainMenuView(self.graphics, model)
       self.controller = MainMenuController(view, model)
@@ -49,15 +49,15 @@ class Game:
       self.controller = GameController(view, level)
     elif mode == self.MODE_PAUSE:
       model = MenuModel(self.graphics, (
-        MenuItem(MenuItem.MUSIC, 'pause_menu_music', MenuItem.TYPE_SLIDER, self.audio.music_volume),
-        MenuItem(MenuItem.SOUND, 'pause_menu_sound', MenuItem.TYPE_SLIDER, self.audio.sfx_volume),
-        MenuItem(MenuItem.MAIN_MENU, 'pause_menu_main_menu'),
-        MenuItem(MenuItem.CONTINUE, 'pause_menu_continue')
+        MenuItem(MenuItem.MUSIC, 'MUSIC', MenuItem.TYPE_SLIDER, self.audio.music_volume),
+        MenuItem(MenuItem.SOUND, 'SOUND', MenuItem.TYPE_SLIDER, self.audio.sfx_volume),
+        MenuItem(MenuItem.MAIN_MENU, 'MAIN MENU'),
+        MenuItem(MenuItem.CONTINUE, 'CONTINUE')
       ))
       view = PauseView(self.graphics, model)
       self.controller = PauseController(view, model)
     elif mode == self.MODE_GAME_OVER:
-      model = MenuModel(self.graphics, (MenuItem(MenuItem.MAIN_MENU, 'pause_menu_main_menu'),))
+      model = MenuModel(self.graphics, (MenuItem(MenuItem.MAIN_MENU, 'MAIN MENU'),))
       view = GameOverView(self.graphics, model)
       self.controller = GameOverController(view, model)
     else:

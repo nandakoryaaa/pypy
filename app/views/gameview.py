@@ -3,12 +3,12 @@ from app.views.view import View
 class GameView(View):
   def __init__(self, graphics, model):
     super().__init__(graphics, model)
-    self.img_stats = graphics.load_image('data/img/stats.png')
+    self.img_esc_menu = graphics.load_image('data/img/esc_menu.png')
     self.img_life = graphics.load_image('data/img/life.png')
     self.img_life_lost = graphics.load_image('data/img/life_lost.png')
 
-    screen_w = self.graphics.screen_width
-    screen_h = self.graphics.screen_height - self.img_stats.get_height()
+    screen_w = self.graphics.width
+    screen_h = self.graphics.height - 50
     level_w = self.model.width + 2
     level_h = self.model.height + 2
 
@@ -19,7 +19,7 @@ class GameView(View):
       cell_size = cell_size2
 
     self.level_x = cell_size + (screen_w - cell_size * level_w) // 2
-    self.level_y = cell_size + self.img_stats.get_height() + (screen_h - cell_size * level_h) // 2
+    self.level_y = cell_size + 50 + (screen_h - cell_size * level_h) // 2
     self.cell_size = cell_size
     self.score = 0
     self.length = 0
@@ -27,17 +27,22 @@ class GameView(View):
 
   def render(self):
     self.graphics.fill((0,0,0))
-    self.graphics.draw_image(self.img_stats, 0, 0)
-    self.graphics.draw_text(str(self.score), 145, 5)
-    self.graphics.draw_text(str(self.length), 565, 5)
+    self.graphics.set_font('green_dark')
+    self.graphics.draw_text('SCORE', 10, 5)
+    self.graphics.draw_text('LENGTH', 10+36*12, 5)
+    self.graphics.set_font('digits_gradient')
+    self.graphics.draw_text(str(self.score), 10+36*6, 5)
+    self.graphics.draw_text(str(self.length), 10+36*19, 5)
 
-    x = 852
+    x = 10+36*26
     for i in range (3 - self.lives):
       self.graphics.draw_image(self.img_life_lost, x, 6)
       x += 46
     for i in range (self.lives):
       self.graphics.draw_image(self.img_life, x, 6)
       x += 46
+
+    self.graphics.draw_image(self.img_esc_menu, 1126, 18)
 
     x = self.level_x
     y = self.level_y

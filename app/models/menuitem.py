@@ -12,15 +12,8 @@ class MenuItem:
   TYPE_SLIDER = 1
   TYPE_SWITCH = 2
 
-  def __init__(self, id, file, type = None, value = 0):
+  def __init__(self, id, text, type = None, value = 0):
     self.id = id
-    self.img = None
-    self.img_hi = None
-    self.file = file
+    self.text = text
     self.type = type
     self.value = value
-
-  def get_img(self, is_active = False):
-    if is_active:
-      return self.img_hi
-    return self.img

@@ -25,6 +25,13 @@ class Graphics:
     else:
       raise ValueError('font ' + id + ' not found')
 
+  def get_font_params(self, id):
+    if id in self.font_list:
+      return self.font_list[id]
+    else:
+      raise ValueError('font ' + id + ' not found')
+
+
   def draw_rect(self, x, y, w, h, color):
     rect = self.rect
     rect.left = x

@@ -6,18 +6,18 @@ class MenuView(View):
     super().__init__(graphics, model)
     self.selector = graphics.load_image('data/img/menu_select.png')
     self.selector_dx = -self.selector.get_width() - 15
-    self.graphics.set_font('green_dark')
     self.width = 0
     self.control_x = 0
+    self.graphics.set_font('green_dark')
     fp = self.graphics.font_params
     for item in model.item_list:
-      w = len(item.text) * (fp.char_width + fp.char_spacing) - fp.char_spacing
+      w = fp.get_str_width(item.text)
       if w > self.width:
         self.width = w
       if item.type == MenuItem.TYPE_SLIDER and w > self.control_x:
         self.control_x = w
     self.width += self.selector_dx
-    self.height = model.item_count * (fp.char_height + fp.line_spacing) - fp.line_spacing
+    self.height = fp.get_lines_height(model.item_count)
     self.arrow_left = self.graphics.load_image('data/img/arrow_left.png')
     self.arrow_right = self.graphics.load_image('data/img/arrow_right.png')
 

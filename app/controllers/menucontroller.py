@@ -19,10 +19,10 @@ class MenuController(Controller):
         exit = self.process_control(game, item, -1)
       elif key == pygame.K_RIGHT:
         exit = self.process_control(game, item, 1)
-      elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+      elif key == pygame.K_RETURN:
         exit = self.process_item(game, item)
       else:
-        exit = self.process_key(game, key)
+        exit = self.process_key(game, event)
       if exit:
         return
 

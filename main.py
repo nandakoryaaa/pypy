@@ -9,7 +9,7 @@ from app.views.gameview import GameView
 from app.views.mainmenuview import MainMenuView
 from app.controllers.gamecontroller import GameController
 from app.controllers.mainmenucontroller import MainMenuController
-from app.models.menumodel import MenuModel
+from app.models.usertable import UserTable
 
 config = Config('game.ini')
 
@@ -23,9 +23,10 @@ graphics.load_font_img('data/fonts/font.png')
 graphics.add_font_params('digits_gradient', FontParams(0,0,36,44,4,16,10,'0123456789'))
 graphics.add_font_params('green_dark', FontParams(0,44,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
 graphics.add_font_params('green_light', FontParams(0,44*5,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
-graphics.add_font_params('white', FontParams(0,44*9,36,44,4,16,10,'ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
+graphics.add_font_params('white', FontParams(0,44*9,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
 
 game = Game(graphics, audio)
+game.user_table = UserTable('data/hiscores.txt')
 game.init_mode(Game.MODE_MAIN_MENU)
 clock = pygame.time.Clock()
 

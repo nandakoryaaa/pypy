@@ -4,10 +4,14 @@ from app.views.gameview import GameView
 from app.views.mainmenuview import MainMenuView
 from app.views.pauseview import PauseView
 from app.views.gameoverview import GameOverView
+from app.views.enternameview import EnterNameView
+from app.views.usertableview import UserTableView
 from app.controllers.gamecontroller import GameController
 from app.controllers.mainmenucontroller import MainMenuController
 from app.controllers.pausecontroller import PauseController
 from app.controllers.gameovercontroller import GameOverController
+from app.controllers.enternamecontroller import EnterNameController
+from app.controllers.usertablecontroller import UserTableController
 from app.models.menuitem import MenuItem
 from app.models.menumodel import MenuModel
 
@@ -21,14 +25,21 @@ class Game:
   MODE_OPTIONS = 6
   MODE_HALL_OF_FAME = 7
   MODE_PAUSE = 8
+  MODE_ENTER_NAME = 9
 
   def __init__(self, graphics, audio):
     self.graphics = graphics
     self.audio = audio
     self.mode = self.MODE_QUIT
     self.controller = None
-    self.score = 0
     self.lives = 0
+    self.score = 0
+    self.max_score = 0
+    self.level = 0
+    self.apples = 0
+    self.max_length = 0
+    self.user_name = 'NO NAME'
+    self.user_table = None
     self.controller_stack = []
 
   def init_mode(self, mode):
@@ -44,6 +55,7 @@ class Game:
     elif mode == self.MODE_PLAY:
       file = open('data/level.txt', 'r')
       lines = file.readlines()
+      file.close()
       level = Level(lines)
       view = GameView(self.graphics, level)
       self.controller = GameController(view, level)
@@ -60,6 +72,15 @@ class Game:
       model = MenuModel(self.graphics, (MenuItem(MenuItem.MAIN_MENU, 'MAIN MENU'),))
       view = GameOverView(self.graphics, model)
       self.controller = GameOverController(view, model)
+    elif mode == self.MODE_ENTER_NAME:
+      model = MenuModel(self.graphics, (MenuItem(MenuItem.CONTINUE, 'CONTINUE'),))
+      view = EnterNameView(self.graphics, model)
+      view.user_name = self.user_name
+      self.controller = EnterNameController(view, model)
+    elif mode == self.MODE_HALL_OF_FAME:
+      menu_model = MenuModel(self.graphics, (MenuItem(MenuItem.MAIN_MENU, 'MAIN MENU'),))
+      view = UserTableView(self.graphics, self.user_table.table, menu_model)
+      self.controller = UserTableController(view, menu_model)
     else:
       mode = self.MODE_QUIT
     self.mode = mode

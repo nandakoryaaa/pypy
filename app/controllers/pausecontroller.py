@@ -4,8 +4,8 @@ from app.models.menuitem import MenuItem
 
 class PauseController(MenuController):
 
-  def process_key(self, game, key):
-    if key == pygame.K_ESCAPE:
+  def process_key(self, game, key_event):
+    if key_event.key == pygame.K_ESCAPE:
       game.pop_mode()
       return True
 

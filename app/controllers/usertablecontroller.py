@@ -1,7 +1,7 @@
 import pygame
 from app.controllers.menucontroller import MenuController
 
-class GameOverController(MenuController):
+class UserTableController(MenuController):
 
   def process_key(self, game, key_event):
     if key_event.key == pygame.K_ESCAPE:
@@ -10,9 +10,5 @@ class GameOverController(MenuController):
     return False
 
   def process_item(self, game, item):
-    min_score = game.user_table.table[9].score
-    if game.max_score > min_score:
-      game.reset_mode(game.MODE_ENTER_NAME)
-    else:
       game.reset_mode(game.MODE_MAIN_MENU)
-    return True
+      return True

@@ -25,7 +25,6 @@ class GameController(Controller):
     python = self.python
     if python.mode == Python.DEAD:
       if game.lives == 0:
-        game.score = 0
         game.push_mode(game.MODE_GAME_OVER)
       else:
         self.reset_python()
@@ -66,14 +65,20 @@ class GameController(Controller):
       head_addr = python.get_head_addr()
       (dx, dy) = self.dirs[python.dir]
       new_head_addr = head_addr + dy * level.width + dx
+
       if level.data[new_head_addr] == Level.APPLE:
-        python.set_mode(Python.GROW, 5)
+        game.apples += 1
+        python.set_mode(Python.GROW, 6)
         self.create_apple()
         game.score += 5
         game.audio.play_sfx('apple')
       elif level.data[new_head_addr] != Level.FIELD:
         python.set_mode(Python.SHRINK, python.length)
         game.lives -= 1
+        if game.score > game.max_score:
+          game.max_score = game.score
+        if python.length > game.max_length:
+          game.max_length = python.length
         new_head_addr = head_addr
         level.data[self.apple_addr] = Level.FIELD
         game.audio.play_sfx('death')
@@ -85,8 +90,8 @@ class GameController(Controller):
     self.view.score = game.score
     self.view.length = python.length
     self.view.lives = game.lives
-    self.view.render()
     python.update()
+    self.view.render()
 
   def create_apple(self):
     level = self.model

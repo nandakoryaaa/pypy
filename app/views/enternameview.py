@@ -2,7 +2,9 @@ from app.views.view import View
 from app.views.menuview import MenuView
 
 class EnterNameView(View):
+
   MSG = 'ENTER YOUR NAME'
+
   def __init__(self, graphics, model):
     super().__init__(graphics, model)
     self.img_logo = graphics.load_image('data/img/title_main.png')
@@ -15,9 +17,12 @@ class EnterNameView(View):
     self.y = logo_height + (graphics.height - logo_height - self.menu_view.height) // 2
     self.menu_view.set_pos(self.x, self.y + 100)
     self.user_name = ''
-    self.ticks = 0
 
   def render(self):
+    self.update_ticks()
+    if self.ticks >= self.MAX_TICKS:
+      self.ticks = 0
+
     g = self.graphics
     g.fill((0,0,0))
     g.draw_image(self.img_logo, 0, 0)
@@ -30,11 +35,8 @@ class EnterNameView(View):
 		 fp.get_str_width(self.MSG) + fp.char_spacing * 2, fp.char_height + fp.char_spacing * 2, (30,80,0))
     g.set_font('white')
     g.draw_text(self.user_name, self.prompt_x, y)
-    self.ticks += 1
-    if self.ticks < 16:
+    if self.ticks <= self.MAX_TICKS // 2:
       g.draw_rect(self.prompt_x + fp.get_str_width(self.user_name) + fp.char_spacing, y + fp.char_height - 8,
 		fp.char_width / 2, 8, (255,255,255))
-    elif self.ticks > 29:
-      self.ticks = 0
 
     self.menu_view.render()

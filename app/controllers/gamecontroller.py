@@ -16,9 +16,9 @@ class GameController(Controller):
     super().__init__(view, model)
     self.python = Python(model.start_addr, model.free_cells)
     model.data[model.start_addr] = Level.HEAD
-    self.speed = 1000 / 30 / 20
+    self.speed = 30 / 15
     self.delay = 0
-    self.apple_addr = None
+    model.apple_addr = None
     self.create_apple()
 
   def update(self, game, events):
@@ -34,13 +34,13 @@ class GameController(Controller):
 
     for event in events:
       key = event.key
-      if key == pygame.K_LEFT and dir != self.DIR_RIGHT:
+      if key == pygame.K_LEFT:
         python.set_dir(self.DIR_LEFT)
-      elif key == pygame.K_RIGHT and dir != self.DIR_LEFT:
+      elif key == pygame.K_RIGHT:
         python.set_dir(self.DIR_RIGHT)
-      elif key == pygame.K_UP and dir != self.DIR_DOWN:
+      elif key == pygame.K_UP:
         python.set_dir(self.DIR_UP)
-      elif key == pygame.K_DOWN and dir != self.DIR_UP:
+      elif key == pygame.K_DOWN:
         python.set_dir(self.DIR_DOWN)
       elif key == pygame.K_ESCAPE:
         game.push_mode(game.MODE_PAUSE)
@@ -50,7 +50,7 @@ class GameController(Controller):
       self.delay -= 1
       return
 
-    self.delay = self.speed
+    self.delay += self.speed
     level = self.model
 
     tail_addr = python.get_tail_addr()
@@ -59,12 +59,13 @@ class GameController(Controller):
 
     level.data[tail_addr] = Level.FIELD
     level.data[new_tail_addr] = Level.TAIL
+    (head_dx, head_dy) = self.dirs[python.dir]
+
+    head_addr = python.get_head_addr()
 
     if python.mode == Python.MOVE or python.mode == Python.GROW:
       game.score += 1
-      head_addr = python.get_head_addr()
-      (dx, dy) = self.dirs[python.dir]
-      new_head_addr = head_addr + dy * level.width + dx
+      new_head_addr = head_addr + head_dy * level.width + head_dx
 
       if level.data[new_head_addr] == Level.APPLE:
         game.apples += 1
@@ -80,16 +81,20 @@ class GameController(Controller):
         if python.length > game.max_length:
           game.max_length = python.length
         new_head_addr = head_addr
-        level.data[self.apple_addr] = Level.FIELD
+        level.data[level.apple_addr] = Level.FIELD
         game.audio.play_sfx('death')
 
       python.move_head(new_head_addr)
       level.data[head_addr] = Level.TAIL
-      level.data[new_head_addr] = Level.HEAD
+      head_addr = new_head_addr
+
+    level.data[head_addr] = Level.HEAD
 
     self.view.score = game.score
     self.view.length = python.length
     self.view.lives = game.lives
+    self.view.head_dx = head_dx
+    self.view.head_dy = head_dy
     python.update()
     self.view.render()
 
@@ -102,7 +107,8 @@ class GameController(Controller):
         break
 
     level.data[apple_addr] = Level.APPLE
-    self.apple_addr = apple_addr
+    level.apple_addr = apple_addr
+    self.view.update_apple_pos(apple_addr)
 
   def reset_python(self):
     head_addr = self.python.get_head_addr()

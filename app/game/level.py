@@ -8,6 +8,7 @@ class Level:
 
   def __init__(self, lines):
     self.start_addr = 0
+    self.apple_addr = None
     self.width = 0
     self.height = 0
     self.data = None

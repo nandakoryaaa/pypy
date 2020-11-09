@@ -10,7 +10,7 @@ class Python:
     self.buffer_size = buffer_size
     self.count = 0
     self.mode = self.INIT
-    self.dir = None
+    self.dir = 0
     self.body = [None] * buffer_size
     self.head = 0
     self.tail = 0
@@ -69,7 +69,6 @@ class Python:
     self.length = 1
     self.count = 0
     self.mode = self.INIT
-    self.dir = None
     self.head = 0
     self.tail = 0
     self.body[self.head] = start_addr

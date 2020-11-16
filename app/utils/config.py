@@ -16,6 +16,7 @@ class Config:
       for key in section:
         setattr(section_object, key, section[key])
       setattr(self, section_name, section_object)
-      
-      
 
+  def get_section(self, section_name):
+    section = getattr(self, section_name)
+    return section

@@ -5,8 +5,10 @@ class Level:
   HEAD = 20
   TAIL = 30
   APPLE = 40
+  EXIT = 50
 
   def __init__(self, lines):
+    self.apple_count = 0
     self.start_addr = 0
     self.apple_addr = None
     self.width = 0
@@ -38,6 +40,8 @@ class Level:
         elif char == '@':
           level[offset] = 1
           self.start_addr = offset
+        elif char == 'E':
+          level[offset] = self.EXIT
         offset += 1
       line_addr += self.width
 

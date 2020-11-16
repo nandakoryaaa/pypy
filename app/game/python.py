@@ -4,6 +4,8 @@ class Python:
   GROW = 2
   SHRINK = 3
   DEAD = 4
+  EXIT = 5
+  OUT = 6
 
   def __init__(self, start_addr, buffer_size):
     self.length = 1
@@ -18,8 +20,6 @@ class Python:
     self.body[self.tail] = start_addr
 
   def set_dir(self, dir):
-    if self.mode == self.DEAD or self.mode == self.SHRINK:
-      return
     if (self.mode == self.INIT):
       self.mode = self.GROW
       self.count = 1
@@ -35,6 +35,8 @@ class Python:
       self.mode = self.MOVE
     elif self.mode == self.SHRINK:
       self.mode = self.DEAD
+    elif self.mode == self.EXIT:
+      self.mode = self.OUT
 
   def move_head(self, addr):
     if self.mode != self.MOVE and self.mode != self.GROW:
@@ -46,7 +48,7 @@ class Python:
     self.length += 1
 
   def move_tail(self):
-    if self.mode != self.MOVE and self.mode != self.SHRINK:
+    if self.mode != self.MOVE and self.mode != self.SHRINK and self.mode != self.EXIT:
       return
     if self.tail == 0:
       self.tail = self.buffer_size

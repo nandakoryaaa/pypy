@@ -11,17 +11,15 @@ class EnterNameView(View):
     logo_height = self.img_logo.get_height()
     self.menu_view = MenuView(graphics, model)
     fp = graphics.font_params
-    self.prompt_x = (graphics.width - fp.get_str_width(self.MSG)) // 2
+    self.prompt_x = self.center_axis(0, self.width, fp.get_str_width(self.MSG))
     self.prompt_y = logo_height + 2 * fp.char_height
-    self.x = (graphics.width - self.menu_view.width) // 2
-    self.y = logo_height + (graphics.height - logo_height - self.menu_view.height) // 2
+    self.x = self.center_axis(0, self.width, self.menu_view.width)
+    self.y = self.center_axis(logo_height, graphics.height, self.menu_view.height)
     self.menu_view.set_pos(self.x, self.y + 100)
     self.user_name = ''
 
   def render(self):
     self.update_ticks()
-    if self.ticks >= self.MAX_TICKS:
-      self.ticks = 0
 
     g = self.graphics
     g.fill((0,0,0))

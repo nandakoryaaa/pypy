@@ -14,11 +14,12 @@ class GameController(Controller):
 
   def __init__(self, view, model):
     super().__init__(view, model)
-    self.python = Python(model.start_addr, model.free_cells)
     model.data[model.start_addr] = Level.HEAD
+    model.apple_addr = None
+    self.python = Python(model.start_addr, model.free_cells)
     self.speed = 30 / 15
     self.delay = 0
-    model.apple_addr = None
+    self.exit_active = False
     self.create_apple()
 
   def update(self, game, events):
@@ -29,8 +30,12 @@ class GameController(Controller):
       else:
         self.reset_python()
       return
-
-    dir = python.dir
+    elif python.mode == Python.OUT:
+      if game.next_level():
+        game.init_mode(game.MODE_START_LEVEL)
+      else:
+        game.init_mode(game.MODE_FINISH)
+      return
 
     for event in events:
       key = event.key
@@ -56,47 +61,57 @@ class GameController(Controller):
     tail_addr = python.get_tail_addr()
     python.move_tail()
     new_tail_addr = python.get_tail_addr()
-
-    level.data[tail_addr] = Level.FIELD
-    level.data[new_tail_addr] = Level.TAIL
-    (head_dx, head_dy) = self.dirs[python.dir]
-
-    head_addr = python.get_head_addr()
-
+    if (tail_addr != new_tail_addr):
+      level.data[tail_addr] = Level.FIELD
+    
     if python.mode == Python.MOVE or python.mode == Python.GROW:
       game.score += 1
+      (head_dx, head_dy) = self.dirs[python.dir]
+      self.view.head_dx = head_dx
+      self.view.head_dy = head_dy
+      head_addr = python.get_head_addr()
+      level.data[head_addr] = Level.TAIL
       new_head_addr = head_addr + head_dy * level.width + head_dx
-
-      if level.data[new_head_addr] == Level.APPLE:
+      data = level.data[new_head_addr]
+      if data == Level.FIELD:
+        python.move_head(new_head_addr)
+        level.data[new_head_addr] = Level.HEAD
+      elif data == Level.APPLE:
+        python.move_head(new_head_addr)
+        level.data[new_head_addr] = Level.HEAD
         game.apples += 1
+        self.view.apples += 1
         python.set_mode(Python.GROW, 6)
         self.create_apple()
         game.score += 5
         game.audio.play_sfx('apple')
-      elif level.data[new_head_addr] != Level.FIELD:
+        if (self.view.apples == level.apple_count):
+          self.exit_active = True
+          self.view.exit_active = True
+      elif data == Level.EXIT and self.exit_active:
+        level.data[new_head_addr] = Level.TAIL
+        python.set_mode(Python.EXIT, python.length)
+        self.update_max_stats(game, python)
+      else:
         python.set_mode(Python.SHRINK, python.length)
+        self.update_max_stats(game, python)
         game.lives -= 1
-        if game.score > game.max_score:
-          game.max_score = game.score
-        if python.length > game.max_length:
-          game.max_length = python.length
-        new_head_addr = head_addr
+        level.data[head_addr] = Level.HEAD
         level.data[level.apple_addr] = Level.FIELD
         game.audio.play_sfx('death')
-
-      python.move_head(new_head_addr)
-      level.data[head_addr] = Level.TAIL
-      head_addr = new_head_addr
-
-    level.data[head_addr] = Level.HEAD
 
     self.view.score = game.score
     self.view.length = python.length
     self.view.lives = game.lives
-    self.view.head_dx = head_dx
-    self.view.head_dy = head_dy
     python.update()
     self.view.render()
+
+  def update_max_stats(self, game, python):
+    if game.score > game.max_score:
+      game.max_score = game.score
+    length = python.length + 1
+    if length > game.max_length:
+      game.max_length = length
 
   def create_apple(self):
     level = self.model
@@ -105,7 +120,6 @@ class GameController(Controller):
       apple_addr = randint(level.width + 2, len(level.data) - level.width - 2)
       if level.data[apple_addr] == Level.FIELD:
         break
-
     level.data[apple_addr] = Level.APPLE
     level.apple_addr = apple_addr
     self.view.update_apple_pos(apple_addr)
@@ -114,4 +128,5 @@ class GameController(Controller):
     head_addr = self.python.get_head_addr()
     self.model.data[head_addr] = Level.FIELD
     self.python.reset(self.model.start_addr)
+    self.model.data[self.model.start_addr] = Level.HEAD
     self.create_apple()

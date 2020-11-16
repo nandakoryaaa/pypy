@@ -16,21 +16,28 @@ class GameView(View):
     self.img_esc_menu = graphics.load_image('data/img/esc_menu.png')
     self.img_life = graphics.load_image('data/img/life.png')
     self.img_life_lost = graphics.load_image('data/img/life_lost.png')
-
+    self.img_score = graphics.load_image('data/img/score.png')
+    self.img_length = graphics.load_image('data/img/length.png')
+    self.img_apples = graphics.load_image('data/img/apples.png')
     level_w = self.model.width + 2
     level_h = self.model.height + 2
 
+    fp = graphics.get_font_params('digits_gradient')
+    offset_y = fp.char_height
+    actual_height = self.height - offset_y
+
     cell_size = self.width // level_w
-    cell_size2 = self.height // level_h
+    cell_size2 = actual_height // level_h
 
     if (cell_size2 < cell_size):
       cell_size = cell_size2
 
     self.level_x = cell_size + self.center_axis(0, self.width, cell_size * level_w)
-    fp = graphics.get_font_params('digits_gradient')
-    self.level_y = fp.char_height + fp.line_spacing + self.center_axis(0, self.height, cell_size * level_h)
+    self.level_y = offset_y + cell_size + self.center_axis(0, actual_height, cell_size * level_h)
     self.cell_size = cell_size
+    self.exit_active = False
     self.score = 0
+    self.apples = 0
     self.length = 0
     self.lives = 0
     self.head_dx = 0
@@ -42,25 +49,28 @@ class GameView(View):
 
   def render(self):
     self.update_ticks()
-    if self.ticks >= self.MAX_TICKS:
-      self.ticks = 0
+
     self.graphics.fill((0,0,0))
-    self.graphics.set_font('green_dark')
-    self.graphics.draw_text('SCORE', 10, 5)
-    self.graphics.draw_text('LENGTH', 10+36*12, 5)
     self.graphics.set_font('digits_gradient')
-    self.graphics.draw_text(str(self.score), 10+36*6, 5)
-    self.graphics.draw_text(str(self.length), 10+36*19, 5)
 
-    x = 10+36*26
+    self.graphics.draw_image(self.img_score, 10, 18)
+    self.graphics.draw_text(str(self.score), 119, 5)
+
+    self.graphics.draw_image(self.img_length, 391, 18)
+    self.graphics.draw_text(str(self.length), 519, 5)
+
+    self.graphics.draw_image(self.img_apples, 719, 18)
+    self.graphics.draw_text(str(self.apples), 847, 5)
+
+    x = 1011
     for i in range (3 - self.lives):
-      self.graphics.draw_image(self.img_life_lost, x, 6)
-      x += 46
+      self.graphics.draw_image(self.img_life_lost, x, 13)
+      x += 33
     for i in range (self.lives):
-      self.graphics.draw_image(self.img_life, x, 6)
-      x += 46
+      self.graphics.draw_image(self.img_life, x, 13)
+      x += 33
 
-    self.graphics.draw_image(self.img_esc_menu, 1126, 18)
+    self.graphics.draw_image(self.img_esc_menu, 1183, 23)
 
     x = self.level_x
     y = self.level_y
@@ -78,8 +88,12 @@ class GameView(View):
       elif byte == level.TAIL:
         self.graphics.draw_rect(x, y, cell_size, cell_size, self.COLOR_TAIL)
       elif byte == level.APPLE:
-        self.draw_apple(x, y)
-
+        self.draw_pulse_box(x, y, self.COLOR_APPLE)
+      elif byte == level.EXIT:
+        if self.exit_active:
+          self.draw_pulse_box(x, y, self.COLOR_WALL)
+        else: 
+          self.graphics.draw_rect(x, y, cell_size, cell_size, self.COLOR_WALL)
       x += self.cell_size
       offset += 1
       if offset == level.width:
@@ -91,14 +105,14 @@ class GameView(View):
     self.apple_x = self.level_x + addr % self.model.width * self.cell_size
     self.apple_y = self.level_y + addr // self.model.width * self.cell_size
 
-  def draw_apple(self, x, y):
+  def draw_pulse_box(self, x, y, color):
     cs = self.cell_size
     self.graphics.draw_rect(x, y, cs - 1, cs - 1, self.COLOR_FIELD)
     half_apple_size = cs // 2
     progress = math.pi * 4 * self.ticks / self.MAX_TICKS
     apple_size = half_apple_size + int(half_apple_size * (1 + math.cos(progress)) / 2)
     offset = (cs - apple_size) // 2
-    self.graphics.draw_rect(x + offset, y + offset, apple_size, apple_size, self.COLOR_APPLE)
+    self.graphics.draw_rect(x + offset, y + offset, apple_size, apple_size, color)
 
   def draw_eyes(self, x, y):
     pupil_size = self.pupil_size
@@ -136,4 +150,3 @@ class GameView(View):
       pupil_y = 0
     self.graphics.draw_rect(eye_x + pupil_x, eye_y + pupil_y, pupil_size, pupil_size, self.COLOR_PUPIL)
     self.graphics.draw_rect(eye_x2 + pupil_x, eye_y2 + pupil_y, pupil_size, pupil_size, self.COLOR_PUPIL)
-    return

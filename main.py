@@ -25,7 +25,7 @@ graphics.add_font_params('green_dark', FontParams(0,44,36,44,4,16,10,'0123456789
 graphics.add_font_params('green_light', FontParams(0,44*5,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
 graphics.add_font_params('white', FontParams(0,44*9,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
 
-game = Game(graphics, audio)
+game = Game(config, graphics, audio)
 game.user_table = UserTable('data/hiscores.txt')
 game.init_mode(Game.MODE_MAIN_MENU)
 clock = pygame.time.Clock()

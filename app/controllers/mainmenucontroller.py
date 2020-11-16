@@ -12,6 +12,7 @@ class MainMenuController(MenuController):
       game.max_length = 0
       game.apples = 0
       game.lives = 3
+      game.level_num = 0
       game.init_mode(game.MODE_START_LEVEL)
       return True
     elif item.id == MenuItem.QUIT:

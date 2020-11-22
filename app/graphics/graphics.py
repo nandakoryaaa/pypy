@@ -2,16 +2,43 @@ import pygame
 import os
 
 class Graphics:
-  def __init__(self, width, height):
+  def __init__(self):
     os.environ['SDL_VIDEO_CENTERED'] = '0'
-    pygame.init()
-    self.width = width
-    self.height = height
-    self.context = pygame.display.set_mode((width, height)) #, pygame.FULLSCREEN)
+    self.width = 0
+    self.height = 0
+    self.context = None
     self.rect = pygame.Rect(0, 0, 0, 0)
     self.img_font = None
     self.font_list = {}
     self.font_params = None
+    self.display_modes = self.get_display_modes()
+    self.display_mode_num = 0
+    self.fullscreen = 0
+    pygame.init()
+
+  def get_display_modes(self):
+    return ((800,600), (1024,768), (1280,720), (1366,768), (1920,1080))
+
+  def set_display_mode(self, width, height, fullscreen):
+    check_mode = (width, height)
+    found_mode = None
+    mode_num = 0
+    for mode in self.display_modes:
+      if mode == check_mode:
+        found_mode = mode
+        break
+      mode_num += 1
+    if found_mode is None:
+      mode_num = 0
+      found_mode = self.display_modes[0]
+    self.width = found_mode[0]
+    self.height = found_mode[1]
+    self.display_mode_num = mode_num
+    self.fullscreen = fullscreen
+    if fullscreen:
+      self.context = pygame.display.set_mode(found_mode, pygame.FULLSCREEN)
+    else:
+      self.context = pygame.display.set_mode(found_mode)
 
   def load_font_img(self, img):
     self.img_font = self.load_image(img)
@@ -30,7 +57,6 @@ class Graphics:
       return self.font_list[id]
     else:
       raise ValueError('font ' + id + ' not found')
-
 
   def draw_rect(self, x, y, w, h, color):
     rect = self.rect

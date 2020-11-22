@@ -15,10 +15,16 @@ config = Config('game.ini')
 
 audio = Audio()
 audio.load_audio('music', 'data/audio/music.wav')
+audio.load_audio('finish', 'data/audio/finish.wav')
 audio.load_audio('apple', 'data/audio/apple.wav')
 audio.load_audio('death', 'data/audio/death.wav')
+audio.set_sfx_volume(float(config.game.sfx_volume))
+audio.set_music_volume(float(config.game.music_volume))
 
-graphics = Graphics(int(config.window.width), int(config.window.height))
+graphics = Graphics()
+w = config.window
+graphics.set_display_mode(int(w.width), int(w.height), bool(w.fullscreen == 'yes'))
+
 graphics.load_font_img('data/fonts/font.png')
 graphics.add_font_params('digits_gradient', FontParams(0,0,36,44,4,16,10,'0123456789'))
 graphics.add_font_params('green_dark', FontParams(0,44,36,44,4,16,10,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!.'))
@@ -28,9 +34,8 @@ graphics.add_font_params('white', FontParams(0,44*9,36,44,4,16,10,'0123456789ABC
 game = Game(config, graphics, audio)
 game.user_table = UserTable('data/hiscores.txt')
 game.init_mode(Game.MODE_MAIN_MENU)
-clock = pygame.time.Clock()
 
-audio.play_music('music')
+clock = pygame.time.Clock()
 
 while game.mode != Game.MODE_QUIT:
   events = pygame.event.get()

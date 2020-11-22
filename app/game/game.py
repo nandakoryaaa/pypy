@@ -8,6 +8,7 @@ from app.views.finishview import FinishView
 from app.views.startlevelview import StartLevelView
 from app.views.enternameview import EnterNameView
 from app.views.usertableview import UserTableView
+from app.views.setupview import SetupView
 from app.controllers.gamecontroller import GameController
 from app.controllers.mainmenucontroller import MainMenuController
 from app.controllers.pausecontroller import PauseController
@@ -15,6 +16,7 @@ from app.controllers.gameovercontroller import GameOverController
 from app.controllers.startlevelcontroller import StartLevelController
 from app.controllers.enternamecontroller import EnterNameController
 from app.controllers.usertablecontroller import UserTableController
+from app.controllers.setupcontroller import SetupController
 from app.models.menuitem import MenuItem
 from app.models.menumodel import MenuModel
 
@@ -25,7 +27,7 @@ class Game:
   MODE_START_LEVEL = 3
   MODE_FINISH = 4
   MODE_GAME_OVER = 5
-  MODE_OPTIONS = 6
+  MODE_SETUP = 6
   MODE_HALL_OF_FAME = 7
   MODE_PAUSE = 8
   MODE_ENTER_NAME = 9
@@ -49,6 +51,9 @@ class Game:
     self.load_level_list(config)
     self.main_menu_model = MenuModel(graphics, (MenuItem(MenuItem.MAIN_MENU, 'MAIN MENU'),))
 
+  def set_fullscreen(self, b):
+    self.graphics.set_display_mode(1280, 720, b)
+
   def load_level_list(self, config):
     levels = config.game.levels.split(',')
     self.level_list = []
@@ -68,9 +73,10 @@ class Game:
 
   def init_mode(self, mode):
     if mode == self.MODE_MAIN_MENU:
+      self.audio.play_music('music')
       model = MenuModel(self.graphics, (
         MenuItem(MenuItem.PLAY, 'PLAY'),
-        MenuItem(MenuItem.OPTIONS, 'OPTIONS'),
+        MenuItem(MenuItem.SETUP, 'SETUP'),
         MenuItem(MenuItem.HALL_OF_FAME, 'HALL OF FAME'),
         MenuItem(MenuItem.QUIT, 'QUIT')
       ))
@@ -98,6 +104,7 @@ class Game:
       view = PauseView(self.graphics, model)
       self.controller = PauseController(view, model)
     elif mode == self.MODE_FINISH:
+      self.audio.play_music('finish')
       view = FinishView(self.graphics, self.main_menu_model)
       view.length = self.max_length
       view.apples = self.apples
@@ -113,6 +120,23 @@ class Game:
     elif mode == self.MODE_HALL_OF_FAME:
       view = UserTableView(self.graphics, self.user_table.table, self.main_menu_model)
       self.controller = UserTableController(view, self.main_menu_model)
+    elif mode == self.MODE_SETUP:
+      model = MenuModel(self.graphics, (
+        MenuItem(MenuItem.SCREEN_SIZE, 'SCREEN SIZE', MenuItem.TYPE_LIST,
+          ('800 X 600', '1024 X 768', '1280 X 720', '1366 X 768', '1920 X 1080'),
+          self.graphics.display_mode_num
+        ),
+        MenuItem(MenuItem.FULLSCREEN, 'FULLSCREEN', MenuItem.TYPE_LIST, ('YES','NO'), 0 if self.graphics.fullscreen else 1),
+        MenuItem(MenuItem.MUSIC, 'MUSIC', MenuItem.TYPE_SLIDER, self.audio.music_volume),
+        MenuItem(MenuItem.SOUND, 'SOUND', MenuItem.TYPE_SLIDER, self.audio.sfx_volume),
+        MenuItem(MenuItem.SAVE, 'APPLY AND SAVE CHANGES'),
+        MenuItem(MenuItem.CANCEL, 'CANCEL')
+      ))
+      view = SetupView(self.graphics, model)
+      controller = SetupController(view, model)
+      controller.display_mode_num = self.graphics.display_mode_num
+      controller.fullscreen = self.graphics.fullscreen
+      self.controller = controller
     else:
       mode = self.MODE_QUIT
     self.mode = mode

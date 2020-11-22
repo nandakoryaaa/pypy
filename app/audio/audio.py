@@ -1,3 +1,4 @@
+from time import sleep
 import pygame
 
 class Audio:
@@ -12,14 +13,22 @@ class Audio:
 		self.sfx_volume = 0.5
 		self.set_sfx_volume(self.sfx_volume)
 		self.set_music_volume(self.music_volume)
+		self.current_music = None
 
 	def load_audio(self, name, filename):
 		sound = pygame.mixer.Sound(filename)
 		self.audio_map[name] = sound
 
 	def play_music(self, name):
+		if self.current_music == name:
+			return
+
 		if name in self.audio_map:
 			music = self.audio_map[name]
+			#if self.current_music is not None:
+			#	pygame.mixer.fadeout(1000)
+			#	sleep(1)
+			self.current_music = name
 			self.channel_music.play(music, -1)
 
 	def play_sfx(self, name):

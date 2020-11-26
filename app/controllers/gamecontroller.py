@@ -37,25 +37,35 @@ class GameController(Controller):
         game.init_mode(game.MODE_FINISH)
       return
 
+    new_dir = python.dir
+
     for event in events:
       key = event.key
       if key == pygame.K_LEFT:
-        python.set_dir(self.DIR_LEFT)
+        new_dir = self.DIR_LEFT
       elif key == pygame.K_RIGHT:
-        python.set_dir(self.DIR_RIGHT)
+        new_dir = self.DIR_RIGHT
       elif key == pygame.K_UP:
-        python.set_dir(self.DIR_UP)
+        new_dir = self.DIR_UP
       elif key == pygame.K_DOWN:
-        python.set_dir(self.DIR_DOWN)
+        new_dir = self.DIR_DOWN
       elif key == pygame.K_ESCAPE:
         game.push_mode(game.MODE_PAUSE)
         return
+
+    if new_dir != python.dir:
+      python.set_dir(new_dir)
+      self.delay = 0
 
     if self.delay > 0:
       self.delay -= 1
       return
 
-    self.delay += self.speed
+    if python.mode == Python.SHRINK or python.mode == Python.EXIT:
+      self.delay += self.speed // 2
+    else:
+      self.delay += self.speed
+
     level = self.model
 
     tail_addr = python.get_tail_addr()

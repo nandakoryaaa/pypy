@@ -12,7 +12,7 @@ class Python:
     self.buffer_size = buffer_size
     self.count = 0
     self.mode = self.INIT
-    self.dir = -1
+    self.dir = None
     self.body = [None] * buffer_size
     self.head = 0
     self.tail = 0
@@ -39,8 +39,6 @@ class Python:
       self.mode = self.OUT
 
   def move_head(self, addr):
-    if self.mode != self.MOVE and self.mode != self.GROW:
-      return
     if self.head == 0:
       self.head = self.buffer_size
     self.head -= 1
@@ -48,8 +46,6 @@ class Python:
     self.length += 1
 
   def move_tail(self):
-    if self.mode != self.MOVE and self.mode != self.SHRINK and self.mode != self.EXIT:
-      return
     if self.tail == 0:
       self.tail = self.buffer_size
     self.tail -= 1
@@ -70,7 +66,7 @@ class Python:
   def reset(self, start_addr):
     self.length = 1
     self.count = 0
-    self.dir = -1
+    self.dir = None
     self.mode = self.INIT
     self.head = 0
     self.tail = 0

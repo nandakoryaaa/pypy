@@ -15,7 +15,7 @@ class FinishView(LogoView):
     self.menu_view = MenuView(graphics, model)
     self.x = self.center_axis(0, self.width, self.menu_view.width)
     fp = graphics.get_font_params('green_light')
-    offset_y = fp.get_lines_height(5)
+    offset_y = fp.get_lines_height(6)
     self.y = self.center_axis(
       self.logo_height, self.height,
       self.menu_view.height + offset_y)
@@ -32,7 +32,7 @@ class FinishView(LogoView):
     self.graphics.draw_text(self.MSG_CONGRATS, self.congrats_x, y)
     y += self.step_y
     self.graphics.draw_text(self.MSG_FINISHED, self.finished_x, y)
-    y += self.step_y
+    y += self.step_y * 2
     g.set_font('green_light')
 
     str_len = self.MSG_MAX_LENGTH + str(self.length)

@@ -69,6 +69,10 @@ class Game:
     file.close()
     level = Level(lines)
     level.apple_count = int(level_config.apple_count)
+    level.growth = int(level_config.growth)
+    fps = int(self.config.game.fps)
+    level.timer = int(level_config.timer) * fps
+    level.apple_timer = int(level_config.apple_timer) * fps
     return level
 
   def init_mode(self, mode):

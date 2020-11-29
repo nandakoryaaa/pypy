@@ -10,11 +10,13 @@ class Level:
   def __init__(self, lines):
     self.apple_count = 0
     self.start_addr = 0
-    self.apple_addr = None
+    self.growth = 0
+    self.timer = 0
+    self.apple_timer = 0
     self.width = 0
     self.height = 0
     self.data = None
-    self.free_cells = 0
+    self.free_cells = 1
     self.build(lines)
 
   def build(self, lines):
@@ -46,3 +48,13 @@ class Level:
       line_addr += self.width
 
     self.data = level
+
+  def get_free_cells(self, buffer):
+    buffer_pos = 0
+    for i in range(self.width + 1, len(self.data) - self.width - 1):
+      if self.data[i] == self.FIELD:
+        buffer[buffer_pos] = i
+        buffer_pos += 1
+    return buffer_pos
+
+    

@@ -12,7 +12,7 @@ class Python:
     self.buffer_size = buffer_size
     self.count = 0
     self.mode = self.INIT
-    self.dir = 0
+    self.dir = -1
     self.body = [None] * buffer_size
     self.head = 0
     self.tail = 0
@@ -70,6 +70,7 @@ class Python:
   def reset(self, start_addr):
     self.length = 1
     self.count = 0
+    self.dir = -1
     self.mode = self.INIT
     self.head = 0
     self.tail = 0

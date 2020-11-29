@@ -1,29 +1,26 @@
-from app.views.view import View
+from app.views.logoview import LogoView
 from app.views.menuview import MenuView
 
-class EnterNameView(View):
+class EnterNameView(LogoView):
 
   MSG = 'ENTER YOUR NAME'
 
   def __init__(self, graphics, model):
     super().__init__(graphics, model)
-    self.img_logo = graphics.load_image('data/img/title_main.png')
-    logo_height = self.img_logo.get_height()
     self.menu_view = MenuView(graphics, model)
-    fp = graphics.font_params
+    fp = graphics.get_font_params('white')
     self.prompt_x = self.center_axis(0, self.width, fp.get_str_width(self.MSG))
-    self.prompt_y = logo_height + 2 * fp.char_height
+    self.prompt_y = self.logo_height + 2 * fp.char_height
     self.x = self.center_axis(0, self.width, self.menu_view.width)
-    self.y = self.center_axis(logo_height, graphics.height, self.menu_view.height)
+    self.y = self.center_axis(self.logo_height, graphics.height, self.menu_view.height)
     self.menu_view.set_pos(self.x, self.y + 100)
     self.user_name = ''
 
   def render(self):
+    super().render()
     self.update_ticks()
 
     g = self.graphics
-    g.fill((0,0,0))
-    g.draw_image(self.img_logo, 0, 0)
     g.set_font('green_light')
     fp = g.font_params
     y = self.prompt_y
